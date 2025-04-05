@@ -18,6 +18,7 @@ void chess::inspin()
 		heading = down;
 		break;
 	}
+	return;
 }
 void chess::bowspin()
 {
@@ -36,6 +37,7 @@ void chess::bowspin()
 		heading = left;
 		break;
 	}
+	return;
 }
 void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 {
@@ -198,6 +200,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 		}
 		return;
 	}
+	return;
 }
 void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 {
@@ -252,5 +255,6 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 		board[newx][newy] = this;
 		return;
 	}
+	return;
 }
 
