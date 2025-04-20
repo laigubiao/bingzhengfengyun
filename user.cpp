@@ -1,6 +1,16 @@
 #include "user.h"
 #include <iostream>
 using namespace std;
+vector<vector<chess*>>simple1 = { {nullptr,new infantry,nullptr,nullptr,nullptr},{new infantry,nullptr,new cavalrty,nullptr,nullptr},{nullptr,nullptr,nullptr,nullptr,nullptr} ,{nullptr,nullptr,nullptr,new bowman,nullptr} ,{nullptr,nullptr,new cavalrty,nullptr,nullptr} };
+vector<vector<chess*>>goal1= { {nullptr,nullptr,nullptr,nullptr,nullptr},{new infantry,new infantry,new cavalrty,nullptr,nullptr},{nullptr,nullptr,nullptr,nullptr,nullptr} ,{nullptr,nullptr,nullptr,new bowman,nullptr} ,{nullptr,nullptr,new cavalrty,nullptr,nullptr} };
+vector<vector<chess*>>simple2;
+vector<vector<chess*>>goal2;
+vector<vector<chess*>>ord1;
+vector<vector<chess*>>ogoal1;
+vector<vector<chess*>>ord2;
+vector<vector<chess*>>ogoal2;
+vector<vector<chess*>>hard1;
+vector<vector<chess*>>hgoal1;
 user::user()
 {
 	id = "0";
@@ -10,11 +20,11 @@ user::user()
 }
 void user::setaccount(string& recordpassword, string& recordid,ofstream &ofs)
 {
-	cout << "ÊäÈëÄãµÄÕË»§Ãû³Æ:";
+	cout << "è¾“å…¥ä½ çš„è´¦æˆ·åç§°:";
 	cin >> id;
 	recordid = id;
 	ofs << id<<" ";
-	cout << '\n' << "ÊäÈëÄãµÄÕË»§ÃÜÂë:";
+	cout << '\n' << "è¾“å…¥ä½ çš„è´¦æˆ·å¯†ç :";
 	cin >> password;
 	recordpassword = password;
 	ofs << password;
@@ -31,23 +41,23 @@ void user::loginaccount(string& recordpassword, string& recordid,ifstream &ifs, 
 	{
 		ifs.seekg(0,ios::beg);
 		ifs >> recordid>>recordpassword;
-		cout << "ÇëÊäÈëÄãµÄÕË»§ºÍid:";
+		cout << "è¯·è¾“å…¥ä½ çš„è´¦æˆ·å’Œid:";
 		cin >> id>>password;
 		if (id != recordid)
 		{
-			cout << "ÕË»§Ãû²»´æÔÚ" << endl;
+			cout << "è´¦æˆ·åä¸å­˜åœ¨" << endl;
 			exit(1);
 		}
 		else
 		{
 			if (password != recordpassword)
 			{
-				cout << "ÃÜÂë´íÎó£¡" << endl;
+				cout << "å¯†ç é”™è¯¯ï¼" << endl;
 				exit(1);
 			}
 			else 
 			{ 
-				cout << "»¶Ó­" << id << "ÓÎÍæ±øÕó·çÔÆ" << endl;
+				cout << "æ¬¢è¿Ž" << id << "æ¸¸çŽ©å…µé˜µé£Žäº‘" << endl;
 				return;
 			}
 		}
@@ -62,11 +72,11 @@ void user::interface()
 {
 	for (;;)
 	{
-		cout << "----------------------------------------------";
-		cout << "----------------1.¿ªÊ¼ÓÎÏ·--------------------";
-		cout << "----------------2.¸öÈËÐÅÏ¢--------------------";
-		cout << "----------------3.½áÊøÓÎÏ·--------------------";
-		cout << "----------------------------------------------";
+		cout << "----------------------------------------------"<<endl;
+		cout << "----------------1.å¼€å§‹æ¸¸æˆ--------------------" << endl;
+		cout << "----------------2.ä¸ªäººä¿¡æ¯--------------------" << endl;
+		cout << "----------------0.ç»“æŸæ¸¸æˆ--------------------" << endl;
+		cout << "----------------------------------------------" << endl;
 		select();
 		if (selection == 2)
 		{
@@ -84,11 +94,11 @@ void user::interface()
 }
 void user::information()
 {
-	cout << "----------------------------------------------";
-	cout << "ÕË»§Ãû³Æ:" << id << endl;
-	cout << "×îºÃ¼ÇÂ¼:"<<endl;
-	cout << "ÊäÈë1¿ÉÐÞ¸Ä¸öÈËÐÅÏ¢£¬ÊäÈë0¿ÉÀë¿ª´ËÒ³Ãæ" << endl;
-	cout << "----------------------------------------------";
+	cout << "----------------------------------------------" << endl;
+	cout << "è´¦æˆ·åç§°:" << id << endl;
+	cout << "æœ€å¥½è®°å½•:"<<endl;
+	cout << "è¾“å…¥1å¯ä¿®æ”¹ä¸ªäººä¿¡æ¯ï¼Œè¾“å…¥0å¯ç¦»å¼€æ­¤é¡µé¢" << endl;
+	cout << "----------------------------------------------" << endl;
 	select();
 	switch (selection)
 	{
@@ -103,11 +113,11 @@ void user::information()
 }
 void user::reset()
 {
-	cout << "----------------------------------------------";
-	cout << "----------------0.Àë¿ªÒ³Ãæ--------------------";
-	cout << "--------------1.ÐÞ¸ÄÕË»§Ãû³Æ------------------";
-	cout << "--------------2.ÐÞ¸ÄÕË»§ÃÜÂë------------------";
-	cout << "----------------------------------------------";
+	cout << "----------------------------------------------" << endl;
+	cout << "----------------0.ç¦»å¼€é¡µé¢--------------------" << endl;
+	cout << "--------------1.ä¿®æ”¹è´¦æˆ·åç§°------------------" << endl;
+	cout << "--------------2.ä¿®æ”¹è´¦æˆ·å¯†ç ------------------" << endl;
+	cout << "----------------------------------------------" << endl;
 	select();
 	switch (selection)
 	{
@@ -115,44 +125,171 @@ void user::reset()
 		interface();
 		break;
 	case 1:
-		cout << "----------------------------------------------";
-		cout << "ÇëÊäÈëÕË»§ÐÂÃû³Æ:";
+		cout << "----------------------------------------------" << endl;
+		cout << "è¯·è¾“å…¥è´¦æˆ·æ–°åç§°:";
 		cin >> id;
-		cout << "----------------------------------------------";
+		cout << "----------------------------------------------" << endl;
 		reset();
 		break;
 	case2:
-		cout << "----------------------------------------------";
-		for (int t=1;;t++)
 		{
-			string newpassword;
-			cout << "ÇëÊäÈëÔ­ÃÜÂë:";
-			cin >> newpassword;
-			if (newpassword != password)
+			cout << "----------------------------------------------" << endl;
+			for (int t = 1;; t++)
 			{
-				cout << "Ô­ÃÜÂë´íÎó£¡" << endl;
-				if (t <= 5)
+				string newpassword;
+				cout << "è¯·è¾“å…¥åŽŸå¯†ç :";
+				cin >> newpassword;
+				if (newpassword != password)
 				{
-					continue;
+					cout << "åŽŸå¯†ç é”™è¯¯ï¼" << endl;
+					if (t <= 5)
+					{
+						continue;
+					}
+					else
+					{
+						cout << "é”™è¯¯æ“ä½œè¿‡å¤šæ¬¡ï¼" << endl;
+						reset();
+					}
 				}
 				else
 				{
-					cout << "´íÎó²Ù×÷¹ý¶à´Î£¡" << endl;
+					cout << "è¯·è¾“å…¥æ–°å¯†ç ";
+					cin >> password;
+					cout << "å¯†ç å·²ä¿®æ”¹å®Œæˆ";
 					reset();
 				}
 			}
-			else
-			{
-				cout << "ÇëÊäÈëÐÂÃÜÂë";
-				cin >> password;
-				cout << "ÃÜÂëÒÑÐÞ¸ÄÍê³É";
-				reset();
-			}
+			break;
 		}
-		break;
 	}
+}
+void user::autogame()
+{
+
+}
+void user::customizedgame()
+{
+
+}
+void user::game(chessboard game)
+{
+	game.useroperate();
 }
 void user::playgame()
 {
-
+	cout << "----------------------------------------------" << endl;
+	cout << "------------------é€‰æ‹©æ¨¡å¼:-------------------" << endl;
+	cout << "---------------1.å›ºå®šæ£‹ç›˜æ¨¡å¼-----------------" << endl;
+	cout << "--------------2.éžå›ºå®šæ£‹ç›˜æ¨¡å¼----------------" << endl;
+	cout << "----------------3.è‡ªå®šä¹‰æ¨¡å¼------------------" << endl;
+	cout << "----------------0.è¿”å›žä¸»èœå•------------------" << endl;
+	select();
+	if (selection == 0)
+	{
+		interface();
+	}
+	if (selection == 1)
+	{
+		cout << "----------------------------------------------" << endl;
+		cout << "------------------é€‰æ‹©æ¨¡å¼:-------------------" << endl;
+		cout << "-----------------1.ç®€å•æ¨¡å¼-------------------" << endl;
+		cout << "-----------------2.æ™®é€šæ¨¡å¼-------------------" << endl;
+		cout << "-----------------3.å›°éš¾æ¨¡å¼-------------------" << endl;
+		select();
+		if (selection == 1)
+		{
+			cout << "----------------------------------------------" << endl;
+			cout << "------------------é€‰æ‹©åœ°å›¾:-------------------" << endl;
+			cout << "-------------------1.åœ°å›¾1--------------------" << endl;
+			cout << "-------------------2.åœ°å›¾2--------------------" << endl;
+			cout << "----------------0.è¿”å›žä¸Šä¸€é¡µ------------------" << endl;
+			select();
+			switch (selection)
+			{
+			case 0:
+				playgame();
+				break;
+			case 1:
+			{
+				chessboard s1(simple1, goal1);
+				game(s1);
+				break;
+			}
+			case 2:
+			{
+				chessboard s2(simple2, goal2);
+				game(s2);
+				break;
+			}
+			default:
+				cout << "é”™è¯¯çš„è¾“å…¥ï¼å·²è‡ªåŠ¨è·³è½¬è‡³ä¸Šä¸€é¡µ" << endl;
+				playgame();
+				break;
+			}
+		}
+		if (selection == 2)
+		{
+			cout << "----------------------------------------------" << endl;
+			cout << "------------------é€‰æ‹©åœ°å›¾:-------------------" << endl;
+			cout << "-------------------1.åœ°å›¾1--------------------" << endl;
+			cout << "-------------------2.åœ°å›¾2--------------------" << endl;
+			cout << "----------------0.è¿”å›žä¸Šä¸€é¡µ------------------" << endl;
+			select();
+			switch (selection)
+			{
+			case 0:
+				playgame();
+				break;
+			case 1:
+			{
+				chessboard o1(ord1, ogoal1);
+				game(o1);
+				break;
+			}
+			case 2:
+			{
+				chessboard o2(ord2, ogoal2);
+				game(o2);
+				break;
+			}
+			default:
+				cout << "é”™è¯¯çš„è¾“å…¥ï¼å·²è‡ªåŠ¨è·³è½¬è‡³ä¸Šä¸€é¡µ" << endl;
+				playgame();
+				break;
+			}
+		}
+		if (selection == 3)
+		{
+			cout << "----------------------------------------------" << endl;
+			cout << "------------------é€‰æ‹©åœ°å›¾:-------------------" << endl;
+			cout << "-------------------1.åœ°å›¾1--------------------" << endl;
+			cout << "----------------0.è¿”å›žä¸Šä¸€é¡µ------------------" << endl;
+			select();
+			switch (selection)
+			{
+			case 0:
+				playgame();
+				break;
+			case 1:
+			{
+				chessboard h1(hard1, hgoal1);
+				game(h1);
+				break;
+			}
+			default:
+				cout << "é”™è¯¯çš„è¾“å…¥ï¼å·²è‡ªåŠ¨è·³è½¬è‡³ä¸Šä¸€é¡µ" << endl;
+				playgame();
+				break;
+			}
+		}
+	}
+	if (selection == 2)
+	{
+		autogame();
+	}
+	if (selection == 3)
+	{
+		customizedgame();
+	}
 }
