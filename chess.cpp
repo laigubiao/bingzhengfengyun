@@ -1,6 +1,18 @@
 #include <iostream>
 #include "chess.h"
+chess::chess()
+{
+	x = 0;
+	y = 0;
+	heading = down;
+}
 void chess::walk(int i, std::vector<std::vector<chess*>>& board){}
+void chess::setx(int i) { x = i; }
+void chess::sety(int i) { y = i; }
+void chess::setdir(direction set) { heading = set; }
+int chess::returnx() { return x; }
+int chess::returny() { return y; }
+direction chess::returndir() { return heading; }
 void chess::inspin()
 {
 	switch (heading)
@@ -43,8 +55,6 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 {
 	int newx = x;
 	int newy = y;
-	board[x][y] = nullptr;
-	std::cout << "infantry turn" << std::endl;
 	for (int t = 1; t <= i; t++)
 	{
 		if (newx > 5 && newy > 5)
@@ -55,40 +65,41 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 		switch (heading)
 		{
 		case (down):
-			newy = newy - 1;
+			newy = newy + 1;
 			break;
 		case (left):
 			newx = newx - 1;
 			break;
 		case(up):
-			newy = newy + 1;
+			newy = newy - 1;
 			break;
 		case(right):
 			newx = newx + 1;
 			break;
 		}
-		if (board[newx][newy] != nullptr)
+		if (board[newy][newx] != nullptr)
 		{
-			board[newx][newy]->inspin();
-			x = newx;
-			y = newy;
+			board[newy][newx]->inspin();
 			switch (heading)
 			{
 			case(down):
-				y = y + 1;
+				newy = newy - 1;
 				break;
 			case(left):
-				x = x + 1;
+				newx = newx + 1;
 			case(up):
-				y = y - 1;
+				newy = newy + 1;
 			case(right):
-				x = x - 1;
+				newx = newx - 1;
 			}
-			board[x][y] = this;
+			board[newy][newx] = board[y][x];
 			return;
 		}
 	}
-	board[newx][newy] = this;
+	board[newy][newx] = board[y][x];
+	y = newy;
+	x = newx;
+	board[y][x] = nullptr;
 	return;
 }
 void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
@@ -96,9 +107,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 	heading = option;
 	int newx = x;
 	int newy = y;
-	board[x][y] = nullptr;
-	std::cout << "bowman turn" << std::endl;
-	for (;newx<=5&&newy<=5;)
+	for (; newx <= 5 && newy <= 5;)
 	{
 		if (newx > 5 && newy > 5)
 		{
@@ -108,92 +117,108 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 		switch (heading)
 		{
 		case (down):
-			newy = newy - 1;
+			newy = newy + 1;
 			break;
 		case (left):
 			newx = newx - 1;
 			break;
 		case(up):
-			newy = newy + 1;
+			newy = newy - 1;
 			break;
 		case(right):
 			newx = newx + 1;
 			break;
 		}
-		if (board[newx][newy] != nullptr)
+		if (board[newy][newx] != nullptr)
 		{
 			switch (heading)
 			{
 			case (down):
-				if (board[newx - 1][newy] == nullptr)
+				if (board[newy][newx-1] == nullptr)
 				{
-					board[newx - 1][newy] = board[newx][newy];
-					board[newx - 1][newy]->bowspin();
-					board[newx][newy] = nullptr;
+					board[newy][newx-1] = board[newy][newx];
+					board[newy][newx-1]->bowspin();
+					board[newy][newx - 1]->setx(newx - 1);
+					board[newy][newx - 1]->sety(newy);
+					board[newy][newx] = nullptr;
 				}
 				else
 				{
-					if (board[newx + 1][newy] == nullptr)
+					if (board[newy][newx+1] == nullptr)
 					{
-						board[newx + 1][newy] = board[newx][newy];
-						board[newx + 1][newy]->bowspin();
-						board[newx][newy] = nullptr;
+						board[newy][newx+1] = board[newy][newx];
+						board[newy][newx+1]->bowspin();
+						board[newy][newx + 1]->setx(newx + 1);
+						board[newy][newx + 1]->sety(newy);
+						board[newy][newx] = nullptr;
 					}
-					else board[newx][newy]->bowspin();
+					else board[newy][newx]->bowspin();
 				}
 				break;
 			case (left):
-				if (board[newx][newy+1] == nullptr)
+				if (board[newy-1][newx] == nullptr)
 				{
-					board[newx][newy+1] = board[newx][newy];
-					board[newx][newy+1]->bowspin();
-					board[newx][newy] = nullptr;
+					board[newy-1][newx] = board[newy][newx];
+					board[newy-1][newx]->bowspin();
+					board[newy-1][newx]->setx(newx);
+					board[newy-1][newx]->sety(newy-1);
+					board[newy][newx] = nullptr;
 				}
 				else
 				{
-					if (board[newx][newy-1] == nullptr)
+					if (board[newy+1][newx] == nullptr)
 					{
-						board[newx][newy-1] = board[newx][newy];
-						board[newx][newy-1]->bowspin();
-						board[newx][newy] = nullptr;
+						board[newy+1][newx] = board[newy][newx];
+						board[newy+1][newx]->bowspin();
+						board[newy+1][newx]->setx(newx);
+						board[newy+1][newx]->sety(newy+1);
+						board[newy][newx] = nullptr;
 					}
-					else board[newx][newy]->bowspin();
+					else board[newy][newx]->bowspin();
 				}
 				break;
 			case(up):
-				if (board[newx + 1][newy] == nullptr)
+				if (board[newy][newx+1] == nullptr)
 				{
-					board[newx + 1][newy] = board[newx][newy];
-					board[newx + 1][newy]->bowspin();
-					board[newx][newy] = nullptr;
+					board[newy][newx+1] = board[newy][newx];
+					board[newy][newx+1]->bowspin();
+					board[newy][newx+1]->setx(newx+1);
+					board[newy][newx+1]->sety(newy);
+					board[newy][newx] = nullptr;
 				}
 				else
 				{
-					if (board[newx - 1][newy] == nullptr)
+					if (board[newy][newx-1] == nullptr)
 					{
-						board[newx - 1][newy] = board[newx][newy];
-						board[newx - 1][newy]->bowspin();
-						board[newx][newy] = nullptr;
+						board[newy][newx-1] = board[newy][newx];
+						board[newy][newx-1]->bowspin();
+						board[newy][newx - 1]->setx(newx - 1);
+						board[newy][newx - 1]->sety(newy);
+						board[newy][newx] = nullptr;
 					}
-					else board[newx][newy]->bowspin();
+					else board[newy][newx]->bowspin();
 				}
 				break;
 			case(right):
-				if (board[newx][newy - 1] == nullptr)
+				if (board[newy+1][newx] == nullptr)
 				{
-					board[newx][newy - 1] = board[newx][newy];
-					board[newx][newy - 1]->bowspin();
-					board[newx][newy] = nullptr;
+					board[newy+1][newx] = board[newy][newx];
+					board[newy+1][newx]->bowspin();
+					board[newy+1][newx]->setx(newx);
+					board[newy+1][newx]->sety(newy+1);
+					board[newy][newx] = nullptr;
 				}
 				else
 				{
-					if (board[newx][newy + 1] == nullptr)
+					if (board[newy-1][newx] == nullptr)
 					{
-						board[newx][newy + 1] = board[newx][newy];
-						board[newx][newy + 1]->bowspin();
-						board[newx][newy] = nullptr;
+						board[newy-1][newx] = board[newy][newx];
+						board[newy-1][newx]->bowspin();
+						board[newy-1][newx]->setx(newx);
+						board[newy-1][newx]->sety(newy-1);
+						board[newy][newx] = nullptr;
 					}
-					else board[newx][newy]->bowspin();
+					else board[newy][newx]->bowspin();
 				}
 				break;
 			}
@@ -206,8 +231,6 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 {
 	int newx = x;
 	int newy = y;
-	board[x][y] = nullptr;
-	std::cout << "cavalty turn" << std::endl;
 	for (int t = 1; t <= i; t++)
 	{
 		if (newx > 5 && newy > 5)
@@ -218,43 +241,69 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 		switch (heading)
 		{
 		case (down):
-			newy = newy - 1;
+			newy = newy + 1;
 			break;
 		case (left):
 			newx = newx - 1;
 			break;
 		case(up):
-			newy = newy + 1;
+			newy = newy - 1;
 			break;
 		case(right):
 			newx = newx + 1;
 			break;
 		}
-		if (board[newx][newy] != nullptr)
+		if (board[newy][newx] != nullptr)
 		{
 			switch (heading)
 			{
 			case (down):
-				board[newx][newy - 1] = board[newx][newy];
-				board[newx][newy] = nullptr;
+				board[newy+1][newx] = board[newy][newx];
+				board[newy+1][newx]->setx(newx);
+				board[newy+1][newx]->sety(newy+1);
+				board[newy][newx] = board[y][x];
+				if (t >= 2)
+				{
+					board[newy-1][newx] = nullptr;
+				}
 				break;
 			case (left):
-				board[newx - 1][newy] = board[newx][newy];
-				board[newx][newy] = nullptr;
+				board[newy][newx-1] = board[newy][newx];
+				board[newy][newx] = board[y][x];
+				board[newy][newx-1]->setx(newx-1);
+				board[newy][newx-1]->sety(newy);
+				if (t >= 2)
+				{
+					board[newy][newx + 1] = nullptr;
+				}
 				break;
 			case(up):
-				board[newx][newy + 1] = board[newx][newy];
-				board[newx][newy] = nullptr;
+				board[newy-1][newx] = board[newy][newx];
+				board[newy][newx] = board[y][x];
+				board[newy-1][newx]->setx(newx);
+				board[newy-1][newx]->sety(newy-1);
+				if (t >= 2)
+				{
+					board[newy+1][newx] = nullptr;
+				}
 				break;
 			case(right):
-				board[newx + 1][newy] = board[newx][newy];
-				board[newx][newy] = nullptr;
+				board[newy][newx+1] = board[newy][newx];
+				board[newy][newx] = board[y][x];
+				board[newy][newx + 1]->setx(newx + 1);
+				board[newy][newx + 1]->sety(newy);
+				if (t >= 2)
+				{
+					board[newy][newx -1] = nullptr;
+				}
 				break;
 			}
 		}
-		board[newx][newy] = this;
-		return;
 	}
+	board[newy][newx] = board[y][x];
+	x = newx;
+	y = newy;
+	board[y][x] = nullptr;
 	return;
 }
 
