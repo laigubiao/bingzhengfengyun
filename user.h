@@ -2,6 +2,7 @@
 #define USER_H
 #include <string>
 #include <fstream>
+#include "chessboard.h"
 using namespace std;
 class user
 {
@@ -17,7 +18,11 @@ public:
 	int select();
 	void interface();
 	void playgame();
+	void game(chessboard game);
+	void customizedgame();
+	void autogame();
 	void reset();
 	void information();
+	~user() {};
 };
 #endif
