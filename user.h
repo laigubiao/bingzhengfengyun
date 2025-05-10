@@ -9,7 +9,6 @@ class user
 private:
 	string id;
 	string password;
-	int movecounter;
 	int selection;
 public:
 	user();
