@@ -6,13 +6,39 @@ chess::chess()
 	y = 0;
 	heading = down;
 }
+chess::chess(int x, int y, direction dir):x(x),y(y),heading(dir){}
+chess::chess(direction given)
+{
+	heading = given;
+}
 void chess::walk(int i, std::vector<std::vector<chess*>>& board){}
 void chess::setx(int i) { x = i; }
 void chess::sety(int i) { y = i; }
 void chess::setdir(direction set) { heading = set; }
 int chess::returnx() { return x; }
 int chess::returny() { return y; }
-direction chess::returndir() { return heading; }
+direction chess::getdir()
+{
+	return heading;
+}
+std::string chess::returndir()
+{
+	switch (heading)
+	{
+	case 1:
+		return "down";
+		break;
+	case 2:
+		return "left";
+		break;
+	case3:
+		return "up";
+		break;
+	case 4:
+		return "right";
+		break;
+	}
+}
 void chess::inspin()
 {
 	switch (heading)
@@ -57,7 +83,7 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 	int newy = y;
 	for (int t = 1; t <= i; t++)
 	{
-		if (newx > 5 && newy > 5)
+		if (newx > 5 || newy > 5||newx<0||newy<0)
 		{
 			std::cout << "wrong operation,please reoperate" << std::endl;
 			return;
@@ -87,19 +113,21 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 				break;
 			case(left):
 				newx = newx + 1;
+				break;
 			case(up):
 				newy = newy + 1;
+				break;
 			case(right):
 				newx = newx - 1;
+				break;
 			}
-			board[newy][newx] = board[y][x];
-			return;
+			break;
 		}
 	}
 	board[newy][newx] = board[y][x];
+	board[y][x] = nullptr;
 	y = newy;
 	x = newx;
-	board[y][x] = nullptr;
 	return;
 }
 void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
@@ -301,8 +329,6 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 		}
 	}
 	board[newy][newx] = board[y][x];
-	x = newx;
-	y = newy;
 	board[y][x] = nullptr;
 	return;
 }
