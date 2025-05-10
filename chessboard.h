@@ -8,9 +8,9 @@ struct State
 {
 	std::vector<std::vector<chess*>> board0;
 	int moveCount;
-	std::vector<std::pair<int, int>> Positions;
+	pair<int, int> Positions;
 	State() {};
-	State(std::vector<std::vector<chess*>> board, int moveCount, std::vector<std::pair<int, int>> Positions)
+	State(std::vector<std::vector<chess*>> board, int moveCount, pair<int, int> Positions)
 		: board0(board), moveCount(moveCount), Positions(Positions) {}
 	bool operator==(const State& other) const 
 	{
@@ -40,8 +40,11 @@ private:
 	vector<vector<chess*>>winposi;
 	vector<vector<chess*>>initialposit;
 	vector<vector<chess*>>board;
-	State instate;
-	State castate;
+	State instate1;
+	State instate2;
+	State castate1;
+	State castate2;
+	int movecounter;
 public:
 	chessboard() 
 	{
@@ -71,8 +74,11 @@ public:
 				wincacoordinate[i][j] = 0;
 			}
 		}
-		instate = State(board, 0, { {winincoordinate[0][1],winincoordinate[0][0]},{winincoordinate[1][1],winincoordinate[1][0]} });
-		castate = State(board, 0, { {wincacoordinate[0][1],wincacoordinate[0][0]},{wincacoordinate[1][1],wincacoordinate[1][0]} });
+		instate1 = State(board, 0, {winincoordinate[0][1],winincoordinate[0][0]});
+		instate2 = State(board, 0, {winincoordinate[1][1],winincoordinate[1][0]});
+		castate1 = State(board, 0, {wincacoordinate[0][1],wincacoordinate[0][0]});
+		castate2 = State(board, 0, {wincacoordinate[1][1],wincacoordinate[1][0]});
+		movecounter = 0;
 	};
 	chessboard(vector<vector<chess*>>&initialposi, vector<vector<chess*>>&inwinposi);
 	void loadwithfile(ifstream& ifs);
