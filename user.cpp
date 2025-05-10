@@ -1,5 +1,8 @@
 #include "user.h"
 #include <iostream>
+#include <cstdlib>
+#include <ctime>
+#include <algorithm>
 using namespace std;
 vector<vector<chess*>>simple1 = { {nullptr,new infantry,nullptr,nullptr,nullptr},{new infantry,nullptr,new cavalrty,nullptr,nullptr},{nullptr,nullptr,nullptr,nullptr,nullptr} ,{nullptr,nullptr,nullptr,new bowman,nullptr} ,{nullptr,nullptr,new cavalrty,nullptr,nullptr} };
 vector<vector<chess*>>goal1= { {nullptr,nullptr,nullptr,nullptr,nullptr},{new infantry,new infantry,new cavalrty,nullptr,nullptr},{nullptr,nullptr,nullptr,nullptr,nullptr} ,{nullptr,nullptr,nullptr,new bowman,nullptr} ,{nullptr,nullptr,new cavalrty,nullptr,nullptr} };
@@ -11,11 +14,36 @@ vector<vector<chess*>>ord2;
 vector<vector<chess*>>ogoal2;
 vector<vector<chess*>>hard1;
 vector<vector<chess*>>hgoal1;
+ifstream cifs;
+ofstream cofs;
+ifstream wifs;
+ofstream wofs;
+void decided(int i, direction& d)
+{
+	switch (i)
+	{
+	case0:
+		break;
+	case1:
+		d = direction::down;
+		break;
+	case2:
+		d = direction::left;
+		break;
+	case3:
+		d = direction::up;
+		break;
+	case4:
+		d = direction::right;
+		break;
+	default:
+		break;
+	}
+}
 user::user()
 {
 	id = "0";
 	password = "0";
-	movecounter = 0;
 	selection = 0;
 }
 void user::setaccount(string& recordpassword, string& recordid,ofstream &ofs)
@@ -28,6 +56,7 @@ void user::setaccount(string& recordpassword, string& recordid,ofstream &ofs)
 	cin >> password;
 	recordpassword = password;
 	ofs << password;
+	ofs.close();
 }
 void user::loginaccount(string& recordpassword, string& recordid,ifstream &ifs, ofstream& ofs)
 {
@@ -41,7 +70,7 @@ void user::loginaccount(string& recordpassword, string& recordid,ifstream &ifs, 
 	{
 		ifs.seekg(0,ios::beg);
 		ifs >> recordid>>recordpassword;
-		cout << "请输入你的账户和id:";
+		cout << "请输入你的账户和密码:";
 		cin >> id>>password;
 		if (id != recordid)
 		{
@@ -62,6 +91,8 @@ void user::loginaccount(string& recordpassword, string& recordid,ifstream &ifs, 
 			}
 		}
 	}
+	ifs.close();
+	ofs.close();
 }
 int user::select()
 {
@@ -166,15 +197,94 @@ void user::reset()
 }
 void user::autogame()
 {
-
+	vector<vector<chess*>>aboard;
+	vector<vector<chess*>>winaboard;
+	vector<pair<int, int>> positions;
+	vector<pair<int, int>> wpositions;
+	for (int i = 0; i < 5; ++i) 
+	{
+		aboard.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr });
+		winaboard.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr });
+		for (int j = 0; j < 5; ++j) 
+		{
+			positions.emplace_back(i, j);
+			wpositions.emplace_back(i, j);
+		}
+	}
+	srand(time(0));
+	std::random_shuffle(positions.begin(), positions.end());
+	std::random_shuffle(wpositions.begin(),wpositions.end());
+	int index1 = 0;
+	int index2 = 0;
+	for (int i = 0; i < 2; ++i) 
+	{
+		int y = positions[index1].first;
+		int x = positions[index1].second;
+		int wy = wpositions[index2].first;
+		int wx = wpositions[index2].second;
+		direction heading; 
+		decided(rand() % 4 + 1,heading);
+		direction wheading;
+		decided(rand() % 4 + 1, wheading);
+		aboard[y][x] = new infantry(x,y,heading);
+		winaboard[wy][wx] = new infantry(x, y, wheading);
+		index1++;
+		index2++;
+	}
+	for (int i = 0; i < 1; ++i) 
+	{
+		int y = positions[index1].first;
+		int x = positions[index1].second;
+		int wy = wpositions[index2].first;
+		int wx = wpositions[index2].second;
+		direction heading;
+		decided(rand() % 4 + 1, heading);
+		direction wheading;
+		decided(rand() % 4 + 1, wheading);
+		aboard[y][x] = new bowman(x, y, heading);
+		winaboard[wy][wx] = new bowman(x, y, wheading);
+		index1++;
+		index2++;
+	}
+	for (int i = 0; i < 2; ++i) 
+	{
+		int y = positions[index1].first;
+		int x = positions[index1].second;
+		int wy = wpositions[index2].first;
+		int wx = wpositions[index2].second;
+		direction heading;
+		decided(rand() % 4 + 1, heading);
+		direction wheading;
+		decided(rand() % 4 + 1, wheading);
+		aboard[y][x] = new cavalrty(x, y, heading);
+		winaboard[wy][wx] = new cavalrty(x, y, wheading);
+		index1++;
+		index2++;
+	}
+	chessboard b(aboard, winaboard);
+	game(b);
 }
 void user::customizedgame()
 {
-
+	cout << "----------------------------------------------" << endl;
+	cout << "------------------选择模式:-------------------" << endl;
+	cout << "---------------1.游玩已定义棋盘---------------" << endl;
+	cout << "----------------2.自定义棋盘------------------" << endl;
+	cout << "----------------0.返回上一页------------------" << endl;
+	select();
+	if (selection == 1)
+	{
+		cout << "----------------------------------------------" << endl;
+		cout << "------------------选择地图:-------------------" << endl;
+		cout << "-------------------1.地图1--------------------" << endl;
+		cout << "-------------------2.地图2--------------------" << endl;
+		cout << "----------------0.返回上一页------------------" << endl;
+	}
 }
 void user::game(chessboard game)
 {
 	game.useroperate();
+	playgame();
 }
 void user::playgame()
 {
@@ -196,6 +306,7 @@ void user::playgame()
 		cout << "-----------------1.简单模式-------------------" << endl;
 		cout << "-----------------2.普通模式-------------------" << endl;
 		cout << "-----------------3.困难模式-------------------" << endl;
+		cout << "----------------0.返回上一页------------------" << endl;
 		select();
 		if (selection == 1)
 		{
