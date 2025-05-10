@@ -1,6 +1,7 @@
 #ifndef CHESS_H
 #define CHESS_H
 #include <vector>
+#include <string>
 enum direction
 {down=1,left=2,up=3,right=4};
 class chess
@@ -11,18 +12,8 @@ protected:
 	direction heading;
 public:
 	chess();
-	void autoload(direction given, int givenx,int giveny)
-	{
-		heading = given;
-		x=givenx;
-		y = giveny;
-	}
-	void customizedload(direction custgiven, int custgivenx,int custgiveny)
-	{
-		heading = custgiven;
-		x=custgivenx;
-		y = custgiveny;
-	}
+	chess(int x, int y, direction dir);
+	chess(direction given);
 	virtual void walk(int i, std::vector<std::vector<chess*>>& board);
 	virtual void shoot(direction option, std::vector<std::vector<chess*>>& board) {};
 	virtual void dirdecide(bool decision){};
@@ -33,13 +24,15 @@ public:
 	void setdir(direction set);
 	int returnx();
 	int returny();
-	direction returndir();
+	direction getdir();
+	std::string returndir();
 	virtual ~chess() {};
 };
 class infantry:public chess
 {
 public:
 	infantry() { chess(); };
+	infantry(int x, int y, direction dir) :chess(x, y, dir){}
 	void walk(int i, std::vector<std::vector<chess*>>& board)override;
 	~infantry()override {};
 };
@@ -47,6 +40,7 @@ class bowman :public chess
 {
 public:
 	bowman() { chess(); };
+	bowman(int x, int y, direction dir) :chess(x, y, dir) {}
 	void shoot(direction option, std::vector<std::vector<chess*>>& board)override;
 	~bowman()override {};
 };
@@ -54,6 +48,7 @@ class cavalrty :public chess
 {
 public:
 	cavalrty() { chess(); };
+	cavalrty(int x, int y, direction dir) :chess(x, y, dir) {}
 	void dirdecide(bool decision)override
 	{
 		if (decision == 1)bowspin();
