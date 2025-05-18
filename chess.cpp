@@ -4,20 +4,22 @@ chess::chess()
 {
 	x = 0;
 	y = 0;
-	heading = down;
+	heading = 1;
 }
-chess::chess(int x, int y, direction dir):x(x),y(y),heading(dir){}
-chess::chess(direction given)
+chess::chess(int x, int y, int dir):x(x),y(y),heading(dir){}
+chess::chess(int given)
 {
+	x = 0;
+	y = 0;
 	heading = given;
 }
-void chess::walk(int i, std::vector<std::vector<chess*>>& board){}
+void chess::walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board){}
 void chess::setx(int i) { x = i; }
 void chess::sety(int i) { y = i; }
-void chess::setdir(direction set) { heading = set; }
+void chess::setdir(int set) { heading = set; }
 int chess::returnx() { return x; }
 int chess::returny() { return y; }
-direction chess::getdir()
+int chess::getdir()
 {
 	return heading;
 }
@@ -25,6 +27,9 @@ std::string chess::returndir()
 {
 	switch (heading)
 	{
+	case 0:
+		return "0";
+		break;
 	case 1:
 		return "down";
 		break;
@@ -37,23 +42,26 @@ std::string chess::returndir()
 	case 4:
 		return "right";
 		break;
+	default:
+		return "default";
+		break;
 	}
 }
 void chess::inspin()
 {
 	switch (heading)
 	{
-	case(down):
-		heading = left;
+	case(1):
+		heading = 2;
 		break;
-	case(left):
-		heading = up;
+	case(2):
+		heading = 3;
 		break;
-	case(up):
-		heading = right;
+	case(3):
+		heading = 4;
 		break;
-	case(right):
-		heading = down;
+	case(4):
+		heading = 1;
 		break;
 	}
 	return;
@@ -62,44 +70,44 @@ void chess::bowspin()
 {
 	switch (heading)
 	{
-	case(down):
-		heading = up;
+	case(1):
+		heading = 3;
 		break;
-	case(left):
-		heading = right;
+	case(2):
+		heading = 4;
 		break;
-	case(up):
-		heading = down;
+	case(3):
+		heading = 1;
 		break;
-	case(right):
-		heading = left;
+	case(4):
+		heading = 2;
 		break;
 	}
 	return;
 }
-void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
+void infantry::walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board)
 {
 	int newx = x;
 	int newy = y;
 	for (int t = 1; t <= i; t++)
 	{
-		if (newx > 5 || newy > 5||newx<0||newy<0)
+		if (newx > w || newy > h||newx<0||newy<0)
 		{
 			std::cout << "wrong operation,please reoperate" << std::endl;
 			return;
 		}
 		switch (heading)
 		{
-		case (down):
+		case (1):
 			newy = newy + 1;
 			break;
-		case (left):
+		case (2):
 			newx = newx - 1;
 			break;
-		case(up):
+		case(3):
 			newy = newy - 1;
 			break;
-		case(right):
+		case(4):
 			newx = newx + 1;
 			break;
 		}
@@ -108,16 +116,16 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 			board[newy][newx]->inspin();
 			switch (heading)
 			{
-			case(down):
+			case(1):
 				newy = newy - 1;
 				break;
-			case(left):
+			case(2):
 				newx = newx + 1;
 				break;
-			case(up):
+			case(3):
 				newy = newy + 1;
 				break;
-			case(right):
+			case(4):
 				newx = newx - 1;
 				break;
 			}
@@ -130,30 +138,30 @@ void infantry::walk(int i, std::vector<std::vector<chess*>>& board)
 	x = newx;
 	return;
 }
-void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
+void bowman::shoot(const int& h, const int& w, const int& option, std::vector<std::vector<chess*>>& board)
 {
 	heading = option;
 	int newx = x;
 	int newy = y;
-	for (; newx <= 5 && newy <= 5;)
+	for (; newx <=w && newy <= h;)
 	{
-		if (newx > 5 && newy > 5)
+		if (newx > w || newy > h || newx < 0 || newy < 0)
 		{
 			std::cout << "wrong operation,please reoperate" << std::endl;
 			return;
 		}
 		switch (heading)
 		{
-		case (down):
+		case (1):
 			newy = newy + 1;
 			break;
-		case (left):
+		case (2):
 			newx = newx - 1;
 			break;
-		case(up):
+		case(3):
 			newy = newy - 1;
 			break;
-		case(right):
+		case(4):
 			newx = newx + 1;
 			break;
 		}
@@ -161,7 +169,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 		{
 			switch (heading)
 			{
-			case (down):
+			case (1):
 				if (board[newy][newx-1] == nullptr)
 				{
 					board[newy][newx-1] = board[newy][newx];
@@ -183,7 +191,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 					else board[newy][newx]->bowspin();
 				}
 				break;
-			case (left):
+			case (2):
 				if (board[newy-1][newx] == nullptr)
 				{
 					board[newy-1][newx] = board[newy][newx];
@@ -205,7 +213,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 					else board[newy][newx]->bowspin();
 				}
 				break;
-			case(up):
+			case(3):
 				if (board[newy][newx+1] == nullptr)
 				{
 					board[newy][newx+1] = board[newy][newx];
@@ -227,7 +235,7 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 					else board[newy][newx]->bowspin();
 				}
 				break;
-			case(right):
+			case(4):
 				if (board[newy+1][newx] == nullptr)
 				{
 					board[newy+1][newx] = board[newy][newx];
@@ -255,29 +263,29 @@ void bowman::shoot(direction option, std::vector<std::vector<chess*>>& board)
 	}
 	return;
 }
-void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
+void cavalrty::walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board)
 {
 	int newx = x;
 	int newy = y;
 	for (int t = 1; t <= i; t++)
 	{
-		if (newx > 5 && newy > 5)
+		if (newx > w || newy > h || newx < 0 || newy < 0)
 		{
 			std::cout << "wrong operation,please reoperate" << std::endl;
 			return;
 		}
 		switch (heading)
 		{
-		case (down):
+		case (1):
 			newy = newy + 1;
 			break;
-		case (left):
+		case (2):
 			newx = newx - 1;
 			break;
-		case(up):
+		case(3):
 			newy = newy - 1;
 			break;
-		case(right):
+		case(4):
 			newx = newx + 1;
 			break;
 		}
@@ -285,7 +293,7 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 		{
 			switch (heading)
 			{
-			case (down):
+			case (1):
 				board[newy+1][newx] = board[newy][newx];
 				board[newy+1][newx]->setx(newx);
 				board[newy+1][newx]->sety(newy+1);
@@ -295,7 +303,7 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 					board[newy-1][newx] = nullptr;
 				}
 				break;
-			case (left):
+			case (2):
 				board[newy][newx-1] = board[newy][newx];
 				board[newy][newx] = board[y][x];
 				board[newy][newx-1]->setx(newx-1);
@@ -305,7 +313,7 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 					board[newy][newx + 1] = nullptr;
 				}
 				break;
-			case(up):
+			case(3):
 				board[newy-1][newx] = board[newy][newx];
 				board[newy][newx] = board[y][x];
 				board[newy-1][newx]->setx(newx);
@@ -315,7 +323,7 @@ void cavalrty::walk(int i, std::vector<std::vector<chess*>>& board)
 					board[newy+1][newx] = nullptr;
 				}
 				break;
-			case(right):
+			case(4):
 				board[newy][newx+1] = board[newy][newx];
 				board[newy][newx] = board[y][x];
 				board[newy][newx + 1]->setx(newx + 1);
