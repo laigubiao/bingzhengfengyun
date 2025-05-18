@@ -44,20 +44,20 @@ State ingetNextStates(const State& state)
 	State nextStates;
 	int x = state.Positions.first;
 	int y = state.Positions.second;
-	direction heading = state.board0[y][x]->getdir(); 
+	int heading = state.board0[y][x]->getdir(); 
 	int newX = x, newY = y;
 	switch (heading) 
 	{
-		case direction::down:
+		case 1:
 			newY = y + 1;
 			break;
-		case direction::left:
+		case 2:
 			newX = x - 1;
 			break;
-		case direction::up:
+		case 3:
 			newY = y - 1;
 			break;
-		case direction::right:
+		case 4:
 			newX = x + 1;
 			break;
 	}
@@ -133,20 +133,20 @@ vector<State> cagetNextStates(const State& state)
 	vector<State> nextStates;
 	int x = state.Positions.first;
 	int y = state.Positions.second;
-	direction heading = state.board0[y][x]->getdir(); 
+	int heading = state.board0[y][x]->getdir(); 
 	int newX = x, newY = y;
 	switch (heading) 
 	{
-	case direction::down:
+	case 1:
 		newY = y + 1;
 		break;
-	case direction::left:
+	case 2:
 		newX = x - 1;
 		break;
-	case direction::up:
+	case 3:
 		newY = y - 1;
 		break;
-	case direction::right:
+	case 4:
 		newX = x + 1;
 		break;
 	}
@@ -159,35 +159,35 @@ vector<State> cagetNextStates(const State& state)
 		newCavalryPositions = { newX, newY };
 		nextStates.push_back(State(newBoard, state.moveCount + 1, newCavalryPositions));
 	}
-	direction newHeading;
+	int newHeading=0;
 	switch (heading) 
 	{
-	case direction::down:
-		newHeading = direction::up;
+	case 1:
+		newHeading = 3;
 		break;
-	case direction::left:
-		newHeading = direction::right;
+	case 2:
+		newHeading = 4;
 		break;
-	case direction::up:
-		newHeading = direction::down;
+	case 3:
+		newHeading = 1;
 		break;
-	case direction::right:
-		newHeading = direction::left;
+	case 4:
+		newHeading = 2;
 		break;
 	}
 	newX = x, newY = y;
 	switch (newHeading) 
 	{
-	case direction::down:
+	case 1:
 		newY = y + 1;
 		break;
-	case direction::left:
+	case 2:
 		newX = x - 1;
 		break;
-	case direction::up:
+	case 3:
 		newY = y - 1;
 		break;
-	case direction::right:
+	case 4:
 		newX = x + 1;
 		break;
 	}
@@ -263,8 +263,10 @@ void cagiveHint(const State& initialState)
 		std::cout << "没有可用的提示。" << std::endl;
 	}
 }
-chessboard::chessboard(vector<vector<chess*>>& initialposi, vector<vector<chess*>>& inwinposi) :board(initialposi), winposi(inwinposi), initialposit(initialposi)
+chessboard::chessboard(const vector<vector<chess*>>& initialposi,const vector<vector<chess*>>& inwinposi) :board(initialposi), winposi(inwinposi), initialposit(initialposi)
 {
+	height = 5;
+	width = 5;
 	getcoor();
 	getwincoor();
 	instate1 = State(board, 0,{incoordinate[0][1],incoordinate[0][0]});
@@ -273,54 +275,89 @@ chessboard::chessboard(vector<vector<chess*>>& initialposi, vector<vector<chess*
 	castate2 = State(board, 0,{cacoordinate[1][1],cacoordinate[1][0]});
 	movecounter = 0;
 }
-void chessboard::loadwithfile(ifstream& ifs)
+chessboard::chessboard(const int &h,const int &w,const vector<vector<chess*>>& initialposi,const vector<vector<chess*>>& inwinposi) :height(h),width(w),board(initialposi), winposi(inwinposi), initialposit(initialposi)
 {
+	getcoor();
+	getwincoor();
+	instate1 = State(board, 0, { incoordinate[0][1],incoordinate[0][0] });
+	instate2 = State(board, 0, { incoordinate[1][1],incoordinate[1][0] });
+	castate1 = State(board, 0, { cacoordinate[0][1],cacoordinate[0][0] });
+	castate2 = State(board, 0, { cacoordinate[1][1],cacoordinate[1][0] });
+	movecounter = 0;
+}
+void chessboard::loadwithfile(const string &file,const string &wfile)
+{
+	ifstream ifs;
+	ifstream wifs;
+	ifs.open(file);
+	wifs.open(wfile);
+	int h = 0, w = 0;
+	ifs >> h >> w;
+	height = h;
+	width = w;
 	string in;
+	int nx = 0, ny = 0;
 	int d = 0;
 	int j = 0,p=0,q=0;
 	for (int i = 0; i < 5; i++)
 	{
-		for (int t = 0; t < 5; t++)
-		{
-			ifs >> in >> d;
-			if (in == "*")board[i][t] = nullptr;
+			ifs >>in>> nx >>ny>> d;
 			if (in == "I")
 			{
-				board[i][t] = new infantry;
-				board[i][t]->setx(t);
-				board[i][t]->sety(i);
-				incoordinate[j][0] = t;
-				incoordinate[j][1] = i;
+				board[ny][nx] = new infantry(nx,ny,d);
+				incoordinate[j][0] = nx;
+				incoordinate[j][1] = ny;
 				j++;
 			}
 			if (in == "B")
 			{
-				board[i][t] = new bowman;
-				board[i][t]->setx(t);
-				board[i][t]->sety(i);
-				bocoordinate[p] = t;
-				bocoordinate[p + 1] = i;
+				board[ny][nx] = new bowman(nx,ny,d);
+				bocoordinate[p] = nx;
+				bocoordinate[p + 1] = ny;
 			}
 			if (in == "C")
 			{
-				board[i][t] = new cavalrty;
-				board[i][t]->setx(t);
-				board[i][t]->sety(i);
-				cacoordinate[q][0] = t;
-				cacoordinate[q][1] = i;
+				board[ny][nx] = new cavalrty(nx,ny,d);
+				cacoordinate[q][0] = nx;
+				cacoordinate[q][1] = ny;
 				q++;
 			}
+	}
+	int wj = 0, wp = 0, wq = 0;
+	for (int i = 0; i < 5; i++)
+	{
+		ifs >> in >> nx >> ny >> d;
+		if (in == "I")
+		{
+			winposi[ny][nx] = new infantry(nx, ny, d);
+			winincoordinate[j][0] = nx;
+			winincoordinate[j][1] = ny;
+			wj++;
+		}
+		if (in == "B")
+		{
+			winposi[ny][nx] = new bowman(nx, ny, d);
+			winbocoordinate[p] = nx;
+			winbocoordinate[p + 1] = ny;
+		}
+		if (in == "C")
+		{
+			winposi[ny][nx] = new cavalrty(nx, ny, d);
+			wincacoordinate[q][0] = nx;
+			wincacoordinate[q][1] = ny;
+			wq++;
 		}
 	}
 	initialposit = board;
 	ifs.close();
+	wifs.close();
 }
 void chessboard::wincondition()
 {
 	cout << "----------------------------------------------" << endl;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < height; i++)
 	{
-		for (int t = 0; t < 5; t++)
+		for (int t = 0; t < width; t++)
 		{
 			if (winposi[i][t] == nullptr)cout << "*"<<" ";
 			if (dynamic_cast<infantry*>(winposi[i][t]))cout << "I"<<" ";
@@ -333,9 +370,9 @@ void chessboard::wincondition()
 void chessboard::getwincoor()
 {
 	int j = 0, p = 0, q = 0;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < height; i++)
 	{
-		for (int t = 0; t < 5; t++)
+		for (int t = 0; t < width; t++)
 		{
 			if (winposi[i][t] == nullptr){}
 			else if (dynamic_cast<infantry*>(winposi[i][t]))
@@ -361,9 +398,9 @@ void chessboard::getwincoor()
 void chessboard::printboard()
 {
 	cout << "----------------------------------------------"<<endl;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < height; i++)
 	{
-		for (int t = 0; t < 5; t++)
+		for (int t = 0; t < width; t++)
 		{
 			if (board[i][t] == nullptr)cout << "*"<<" ";
 			if (dynamic_cast<infantry*>(board[i][t]))cout << "I"<<" ";
@@ -375,9 +412,9 @@ void chessboard::printboard()
 }
 bool chessboard::checksuccess()
 {
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < height; i++)
 	{
-		for (int t = 1; t < 5; t++)
+		for (int t = 1; t < width; t++)
 		{
 			if (board[i][t] == nullptr && winposi[i][t] == nullptr)continue;
 			else if (board[i][t] != nullptr && winposi[i][t] != nullptr)
@@ -400,9 +437,9 @@ void chessboard::reset()
 void chessboard::getcoor()
 {
 	int j = 0, p = 0, q = 0;
-	for (int i = 0; i < 5; i++)
+	for (int i = 0; i < height; i++)
 	{
-		for (int t = 0; t < 5; t++)
+		for (int t = 0; t < width; t++)
 		{
 			if (dynamic_cast<infantry*>(board[i][t]))
 			{
@@ -470,7 +507,7 @@ void chessboard::useroperate()
 				}
 				cout << "请输入该步兵前进的步数:";
 				cin >> num;
-				board[incoordinate[1][1]][incoordinate[1][0]]->walk(num, board);
+				board[incoordinate[1][1]][incoordinate[1][0]]->walk(height,width,num, board);
 			}
 			else if(whichob==1)
 			{
@@ -484,7 +521,7 @@ void chessboard::useroperate()
 				}
 				cout << "请输入该步兵前进的步数:";
 				cin >> num;
-				board[incoordinate[0][1]][incoordinate[0][0]]->walk(num, board);
+				board[incoordinate[0][1]][incoordinate[0][0]]->walk(height, width, num, board);
 			}
 			else if (whichob == 0)
 			{
@@ -499,7 +536,7 @@ void chessboard::useroperate()
 		if (i == 2)
 		{
 			int t = 0;
-			direction option = down;
+			int option = 1;
 			cout << "此时弓箭手的坐标为:(" << bocoordinate[0] << "," << bocoordinate[1] << ")";
 			cout << endl;
 			cout << "此时弓箭手的面向方向为:" << board[bocoordinate[1]][bocoordinate[0]]->returndir();
@@ -509,16 +546,16 @@ void chessboard::useroperate()
 			switch (t)
 			{
 			case 1:
-				option = down;
+				option = 1;
 				break;
 			case 2:
-				option = direction::left;
+				option = 2;
 				break;
 			case 3:
-				option = up;
+				option = 3;
 				break;
 			case 4:
-				option = direction::right;
+				option = 4;
 				break;
 			case 5:
 				break;
@@ -529,7 +566,7 @@ void chessboard::useroperate()
 			}
 			if (t == 1 || t == 2 || t == 3 || t == 4)
 			{
-				board[bocoordinate[1]][bocoordinate[0]]->shoot(option, board);
+				board[bocoordinate[1]][bocoordinate[0]]->shoot(height,width,option, board);
 			}
 			else if (t == 0)
 			{
@@ -576,7 +613,7 @@ void chessboard::useroperate()
 				cout << "请输入该骑兵前进的步数";
 				cin >> num;
 				board[cacoordinate[1][1]][cacoordinate[1][0]]->dirdecide(decision);
-				board[cacoordinate[1][1]][cacoordinate[1][0]]->walk(num, board);
+				board[cacoordinate[1][1]][cacoordinate[1][0]]->walk(height, width, num, board);
 			}
 			else if (whichob == 1)
 			{
@@ -591,7 +628,7 @@ void chessboard::useroperate()
 				cout << "请输入该骑兵前进的步数";
 				cin >> num;
 				board[cacoordinate[0][1]][cacoordinate[0][0]]->dirdecide(decision);
-				board[cacoordinate[0][1]][cacoordinate[0][0]]->walk(num, board);
+				board[cacoordinate[0][1]][cacoordinate[0][0]]->walk(height, width, num, board);
 			}
 			else if (whichob == 0)
 			{
