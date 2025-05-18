@@ -12,12 +12,14 @@ private:
 	int selection;
 public:
 	user();
-	void setaccount(string &recordpassword,string &recordid,ofstream &ofs);
-	void loginaccount(string &recordpassword,string& recordid,ifstream &ifs, ofstream& ofs);
+	void setaccount(string &recordpassword,string &recordid,const string file);
+	void loginaccount(string &recordpassword,string& recordid,const string file);
 	int select();
 	void interface();
 	void playgame();
-	void game(chessboard game);
+	void game(const chessboard game);
+	void cust(const int &i);
+	void playcust(const int& i);
 	void customizedgame();
 	void autogame();
 	void reset();
