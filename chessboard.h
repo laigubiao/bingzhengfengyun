@@ -50,17 +50,17 @@ public:
 	{
 		width = 5;
 		height = 5;
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 8; i++)
 		{
-			winposi.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr });
+			winposi.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr });
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 8; i++)
 		{
-			board.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr });
+			board.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr });
 		}
-		for (int i = 0; i < 5; i++)
+		for (int i = 0; i < 8; i++)
 		{
-			initialposit.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr });
+			initialposit.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr });
 		}
 		for (int i = 0; i < 2; i++)
 		{
@@ -80,8 +80,9 @@ public:
 		castate2 = State(board, 0, {wincacoordinate[1][1],wincacoordinate[1][0]});
 		movecounter = 0;
 	};
-	chessboard(vector<vector<chess*>>&initialposi, vector<vector<chess*>>&inwinposi);
-	void loadwithfile(ifstream& ifs);
+	chessboard(const vector<vector<chess*>>&initialposi,const vector<vector<chess*>>&inwinposi);
+	chessboard(const int &h,const int &w,const vector<vector<chess*>>& initialposi,const vector<vector<chess*>>& inwinposi);
+	void loadwithfile(const string& file, const string& wfile);
 	void wincondition();
 	void getwincoor();
 	void printboard();
