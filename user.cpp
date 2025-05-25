@@ -103,6 +103,7 @@ void user::interface()
 		cout << "----------------------------------------------"<<endl;
 		cout << "----------------1.开始游戏--------------------" << endl;
 		cout << "----------------2.个人信息--------------------" << endl;
+		cout << "----------------3.游戏规则--------------------" << endl;
 		cout << "----------------0.结束游戏--------------------" << endl;
 		cout << "----------------------------------------------" << endl;
 		select();
@@ -119,13 +120,29 @@ void user::interface()
 		{
 			playgame();
 		}
+		if (selection == 3)
+		{
+			cout << "----------------------------------------------" << endl;
+			cout << "游玩开始前会给出一个目标棋盘和初始棋盘，玩家按" << endl;
+			cout << "照步兵，弓箭手，骑兵的顺序进行操作，其中步兵能" << endl;
+			cout << "前进任意步，若前行时碰到其他棋子，则被碰棋子顺" << endl;
+			cout << "时针旋转90°，弓箭手可以往任意方向射击，被射击" << endl;
+			cout << "的第一个棋子需要向右前行一格（相对于弓箭手），" << endl;
+			cout << "并顺时针旋转180°，若右边有棋子，则往左前行一" << endl;
+			cout << "格，若左右都有棋子，则仅旋转180°，骑兵可以前" << endl;
+			cout << "行任意格，也可先旋转180°，再前行任意格，若前" << endl;
+			cout << "行中碰到其他棋子，则可带其他棋子一同前行。（注" << endl;
+			cout << "意：操作步兵时只能沿当前方向前进）。棋子的x坐标" << endl;
+			cout << "代表离最左端的距离，y坐标代表离最上端的距离，也" << endl;
+			cout << "可这么理解，先从左往右，再从上往下，数到第几个棋" << endl;
+			cout << "子，其序号就是几，该序号是实时变化的。" << endl;
+		}
 	}
 }
 void user::information()
 {
 	cout << "----------------------------------------------" << endl;
 	cout << "账户名称:" << id << endl;
-	cout << "最好记录:"<<endl;
 	cout << "输入1可修改个人信息，输入0可离开此页面" << endl;
 	cout << "----------------------------------------------" << endl;
 	select();
@@ -195,6 +212,7 @@ void user::reset()
 }
 void user::autogame()
 {
+	int inf = 0, bow = 0, cav = 0;
 	cout << "----------------------------------------------" << endl;
 	cout << "想玩多大的棋盘?请输入棋盘高度和宽度（至多为8*8）" << endl;
 	int h = 0, w = 0;
@@ -208,6 +226,12 @@ void user::autogame()
 		}
 		else break;
 	}
+	cout << "请输入棋盘中步兵的个数(至多为5):";
+	cin >> inf;
+	cout << "请输入棋盘中弓箭手的个数(至多为3):";
+	cin >> bow;
+	cout << "请输入棋盘中骑兵的个数(至多为5):";
+	cin >> cav;
 	vector<vector<chess*>>aboard;
 	vector<vector<chess*>>winaboard;
 	vector<pair<int, int>> positions;
@@ -218,8 +242,8 @@ void user::autogame()
 		winaboard.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr });
 		for (int j = 0; j < w; ++j) 
 		{
-			positions.emplace_back(i, j);
-			wpositions.emplace_back(i, j);
+			positions.emplace_back(j, i);
+			wpositions.emplace_back(j, i);
 		}
 	}
 	srand(time(0));
@@ -227,12 +251,12 @@ void user::autogame()
 	std::random_shuffle(wpositions.begin(),wpositions.end());
 	int index1 = 0;
 	int index2 = 0;
-	for (int i = 0; i < 2; ++i) 
+	for (int i = 0; i < inf; ++i) 
 	{
-		int y = positions[index1].first;
-		int x = positions[index1].second;
-		int wy = wpositions[index2].first;
-		int wx = wpositions[index2].second;
+		int x = positions[index1].first;
+		int y = positions[index1].second;
+		int wx = wpositions[index2].first;
+		int wy = wpositions[index2].second;
 		int heading; 
 		heading = (int)rand() % 4 + 1;
 		int wheading;
@@ -242,12 +266,12 @@ void user::autogame()
 		index1++;
 		index2++;
 	}
-	for (int i = 0; i < 1; ++i) 
+	for (int i = 0; i < bow; ++i) 
 	{
-		int y = positions[index1].first;
-		int x = positions[index1].second;
-		int wy = wpositions[index2].first;
-		int wx = wpositions[index2].second;
+		int x = positions[index1].first;
+		int y = positions[index1].second;
+		int wx = wpositions[index2].first;
+		int wy = wpositions[index2].second;
 		int heading;
 		heading= (int)rand()%4+1;
 		int wheading;
@@ -257,12 +281,12 @@ void user::autogame()
 		index1++;
 		index2++;
 	}
-	for (int i = 0; i < 2; ++i) 
+	for (int i = 0; i < cav; ++i) 
 	{
-		int y = positions[index1].first;
-		int x = positions[index1].second;
-		int wy = wpositions[index2].first;
-		int wx = wpositions[index2].second;
+		int x = positions[index1].first;
+		int y = positions[index1].second;
+		int wx = wpositions[index2].first;
+		int wy = wpositions[index2].second;
 		int heading;
 		heading = (int)rand() % 4 + 1;
 		int wheading;
@@ -272,7 +296,7 @@ void user::autogame()
 		index1++;
 		index2++;
 	}
-	chessboard b(h,w,aboard, winaboard);
+	chessboard b(h,w,aboard, winaboard,inf,bow,cav);
 	game(b);
 }
 void user::cust(const int& i)
@@ -285,21 +309,25 @@ void user::cust(const int& i)
 	cin >> h >> w;
 	ofs[i] << h << " " << w << " ";
 	wofs[i] << h << " " << w << " ";
-	pair<int, int>cor[5];
-	int dir[5];
+	pair<int, int>cor[13];
+	int dir[13];
 	string sym;
+	int inf = 0, bow = 0, cav = 0;
+	cout << "请输入棋盘中步兵，弓箭手和骑兵的个数:" << endl;
+	cin >> inf >> bow >> cav;
+	ofs[i] << inf << " " << bow << " " << cav << " ";
 	cout << "请输入初始棋盘中棋子的坐标以及方向（其中I代表步兵,B代表弓箭手,C代表骑兵）（方向中1代表下,2代表左,3代表上,4代表右）" << endl;
 	cout << "比如输入 I 4 5 2,代表设置一个骑兵位于（4,5）的位置，且其方向向左" << endl;
-	for (int r = 0; r < 5; r++)
+	for (int r = 0; r < inf+bow+cav; r++)
 	{
 		cin >> sym >> cor[r].first >> cor[r].second >> dir[r];
-		ofs[i] << sym << " " << cor[r].first << " " << cor[r].second << " " << dir[r];
+		ofs[i] << sym << " " << cor[r].first << " " << cor[r].second << " " << dir[r]<<" ";
 	}
 	cout << "请输入目标棋盘中棋子的坐标以及方向:" << endl;
-	for (int r = 0; r < 5; r++)
+	for (int r = 0; r < inf+bow+cav; r++)
 	{
 		cin >> sym >> cor[r].first >> cor[r].second >> dir[r];
-		wofs[i] << sym << " " << cor[r].first << " " << cor[r].second << " " << dir[r];
+		wofs[i] << sym << " " << cor[r].first << " " << cor[r].second << " " << dir[r]<<" ";
 	}
 	ofs[i].close();
 	wofs[i].close();
