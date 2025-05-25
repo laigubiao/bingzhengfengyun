@@ -43,7 +43,7 @@ std::string chess::returndir()
 		return "right";
 		break;
 	default:
-		return "default";
+		return "up";
 		break;
 	}
 }
