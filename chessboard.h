@@ -3,48 +3,29 @@
 #include "chess.h"
 #include <vector>
 #include <fstream>
+#include <chrono>
+#include <thread>
 using namespace std;
-struct State 
-{
-	std::vector<std::vector<chess*>> board0;
-	int moveCount;
-	pair<int, int> Positions;
-	State() {};
-	State(std::vector<std::vector<chess*>> board, int moveCount, pair<int, int> Positions)
-		: board0(board), moveCount(moveCount), Positions(Positions) {}
-	bool operator==(const State& other) const 
-	{
-		if (board0.size() != other.board0.size()) return false;
-		for (size_t i = 0; i < board0.size(); ++i) 
-		{
-			if (board0[i].size() != other.board0[i].size()) return false;
-			for (size_t j = 0; j < board0[i].size(); ++j)
-			{
-				if (board0[i][j] != other.board0[i][j]) return false;
-			}
-		}
-		return true;
-	}
-};
 class chessboard
 {
 private:
 	int width;
 	int height;
-	int incoordinate[2][2];
-	int bocoordinate[2];
-	int cacoordinate[2][2];
-	int winincoordinate[2][2];
-	int winbocoordinate[2];
-	int wincacoordinate[2][2];
+	int incoordinate[5][2];
+	int bocoordinate[3][2];
+	int cacoordinate[5][2];
+	int winincoordinate[5][2];
+	int winbocoordinate[3][2];
+	int wincacoordinate[5][2];
 	vector<vector<chess*>>winposi;
 	vector<vector<chess*>>initialposit;
 	vector<vector<chess*>>board;
-	State instate1;
-	State instate2;
-	State castate1;
-	State castate2;
 	int movecounter;
+	chrono::steady_clock::time_point startTime;
+	chrono::steady_clock::time_point endTime;
+	int innum;
+	int bownum;
+	int cavnum;
 public:
 	chessboard() 
 	{
@@ -62,10 +43,8 @@ public:
 		{
 			initialposit.push_back({ nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr });
 		}
-		for (int i = 0; i < 2; i++)
+		for (int i = 0; i < 5; i++)
 		{
-			bocoordinate[i] = 0;
-			winbocoordinate[i] = 0;
 			for (int j = 0; j < 2; j++)
 			{
 				incoordinate[i][j] = 0;
@@ -74,19 +53,28 @@ public:
 				wincacoordinate[i][j] = 0;
 			}
 		}
-		instate1 = State(board, 0, {winincoordinate[0][1],winincoordinate[0][0]});
-		instate2 = State(board, 0, {winincoordinate[1][1],winincoordinate[1][0]});
-		castate1 = State(board, 0, {wincacoordinate[0][1],wincacoordinate[0][0]});
-		castate2 = State(board, 0, {wincacoordinate[1][1],wincacoordinate[1][0]});
+		for (int i = 0; i < 3; i++)
+		{
+			for (int j = 0; j < 2; j++)
+			{
+				bocoordinate[i][j] = 0;
+				winbocoordinate[i][j] = 0;
+			}
+		}
 		movecounter = 0;
+		innum = 2;
+		bownum = 1;
+		cavnum = 2;
 	};
 	chessboard(const vector<vector<chess*>>&initialposi,const vector<vector<chess*>>&inwinposi);
-	chessboard(const int &h,const int &w,const vector<vector<chess*>>& initialposi,const vector<vector<chess*>>& inwinposi);
+	chessboard(const int &h,const int &w,const vector<vector<chess*>>& initialposi,const vector<vector<chess*>>& inwinposi, const int& in, const int& bn, const int& cn);
 	void loadwithfile(const string& file, const string& wfile);
 	void wincondition();
 	void getwincoor();
 	void printboard();
 	bool checksuccess();
+	void startGame();
+	void endGame();
 	void reset();
 	void getcoor();
 	void useroperate();
