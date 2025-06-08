@@ -78,6 +78,29 @@ public:
 	void reset();
 	void getcoor();
 	void useroperate();
-	~chessboard() {};
+	~chessboard()
+	{
+		for (int i = 0; i < 8; i++)
+		{
+			for (int t = 0; t < 8; t++)
+			{
+				if(winposi[i][t]!=nullptr)delete winposi[i][t];
+			}
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			for (int t = 0; t < 8; t++)
+			{
+				if (board[i][t] != nullptr)delete board[i][t];
+			}
+		}
+		for (int i = 0; i < 8; i++)
+		{
+			for (int t = 0; t < 8; t++)
+			{
+				if (initialposit[i][t] != nullptr)delete initialposit[i][t];
+			}
+		}
+	}
 };
 #endif
