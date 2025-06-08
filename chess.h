@@ -14,7 +14,7 @@ public:
 	chess(int given);
 	virtual void walk(const int &h,const int &w,const int &i, std::vector<std::vector<chess*>>& board);
 	virtual void shoot(const int& h, const int& w,const int &option, std::vector<std::vector<chess*>>& board) {};
-	virtual void dirdecide(bool decision){};
+	virtual void dirdecide(const int& decision){};
 	void inspin();
 	void bowspin();
 	void setx(int i);
@@ -30,6 +30,7 @@ class infantry:public chess
 {
 public:
 	infantry() { chess(); };
+	infantry(int given);
 	infantry(int x, int y, int dir) :chess(x, y, dir){}
 	void walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board)override;
 	~infantry()override {};
@@ -38,6 +39,7 @@ class bowman :public chess
 {
 public:
 	bowman() { chess(); };
+	bowman(int given);
 	bowman(int x, int y, int dir) :chess(x, y, dir) {}
 	void shoot(const int& h, const int& w, const int& option, std::vector<std::vector<chess*>>& board)override;
 	~bowman()override {};
@@ -46,8 +48,9 @@ class cavalrty :public chess
 {
 public:
 	cavalrty() { chess(); };
+	cavalrty(int given);
 	cavalrty(int x, int y, int dir) :chess(x, y, dir) {}
-	void dirdecide(bool decision)override
+	void dirdecide(const int &decision)override
 	{
 		if (decision == 1)bowspin();
 		else return;
