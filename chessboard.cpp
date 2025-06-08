@@ -70,9 +70,11 @@ void chessboard::loadwithfile(const string &file,const string &wfile)
 			}
 	}
 	int wj = 0, wp = 0, wq = 0;
+	int a = 0, b = 0;
+	wifs >> a >> b;
 	for (int i = 0; i < inf+bow+cav; i++)
 	{
-		ifs >> in >> nx >> ny >> d;
+		wifs >> in >> nx >> ny >> d;
 		if (in == "I")
 		{
 			winposi[ny][nx] = new infantry(nx, ny, d);
@@ -223,14 +225,13 @@ void chessboard::getcoor()
 }
 void chessboard::useroperate()
 {
-	cout << "目标棋盘为:" << endl;
-	wincondition();
 	int i = 1;
 	startGame();
 	while (checksuccess())
 	{
+		cout << "目标棋盘为:" << endl;
+		wincondition();
 		getcoor();
-		cout << 1;
 		for (int t = 0; t < innum; t++)
 		{
 			board[incoordinate[t][1]][incoordinate[t][0]]->setx(incoordinate[t][0]);
@@ -246,7 +247,6 @@ void chessboard::useroperate()
 			board[cacoordinate[t][1]][cacoordinate[t][0]]->setx(cacoordinate[t][0]);
 			board[cacoordinate[t][1]][cacoordinate[t][0]]->sety(cacoordinate[t][1]);
 		}
-		cout << 2;
 		int num;
 		int whichob=0;
 		printboard();
@@ -271,10 +271,10 @@ void chessboard::useroperate()
 			cout << "请输入你要操作的步兵对象:(";
 			for (int t = 0; t < innum; t++)
 			{
-				cout << t<<"为第"<<t<<"个步兵";
+				cout << t+1<<"为第"<<t+1<<"个步兵";
 				if (t != innum - 1)cout << ",";
 			}
-			cout << "6为跳过本回合操作，0为重置游戏)" << endl;
+			cout << "，6为跳过本回合操作，9为回到主菜单，0为重置游戏)" << endl;
 			cin >> whichob;
 			if (whichob==2)
 			{
@@ -312,6 +312,10 @@ void chessboard::useroperate()
 				i = 1;
 				continue;
 			}
+			else if (whichob == 9)
+			{
+				return;
+			}
 			i=2;
 			movecounter++;
 			continue;
@@ -337,10 +341,10 @@ void chessboard::useroperate()
 			cout << "请输入你要操作的弓箭手对象:(";
 			for (int t = 0; t < bownum; t++)
 			{
-				cout << t << "为第" << t << "个弓箭手";
+				cout << t+1 << "为第" << t+1 << "个弓箭手";
 				if (t != bownum - 1)cout << ",";
 			}
-			cout << "6为跳过本回合操作，0为重置游戏)" << endl;
+			cout << "，6为跳过本回合操作，9为回到主菜单，0为重置游戏)" << endl;
 			cin >> whichob;
 			if (whichob == 0)
 			{
@@ -348,7 +352,11 @@ void chessboard::useroperate()
 				i = 1;
 				continue;
 			}
-			cout << "请输入你想弓箭手所射击的方向（1为往下,2为往左,3为往上,4为往右,6为跳过本回合操作，0为重置游戏):";
+			else if (whichob == 9)
+			{
+				return;
+			}
+			cout << "请输入你想弓箭手所射击的方向（1为往下,2为往左,3为往上,4为往右,6为跳过本回合操作，9为回到主菜单，0为重置游戏):";
 			cin >> d;
 			switch (d)
 			{
@@ -434,7 +442,7 @@ void chessboard::useroperate()
 			bool deci = 0;
 			cout << "此时" << cavnum << "个骑兵的坐标分别为:";
 			cout << endl;
-			for (int t = 0; t < innum; t++)
+			for (int t = 0; t < cavnum; t++)
 			{
 				cout << "(" << cacoordinate[t][0] << ", " << cacoordinate[t][1] << ")";
 			}
@@ -450,24 +458,35 @@ void chessboard::useroperate()
 			cout << "请输入你要操作的骑兵对象:(";
 			for (int t = 0; t < cavnum; t++)
 			{
-				cout << t << "为第" << t << "个骑兵";
+				cout << t+1 << "为第" << t+1 << "个骑兵";
 				if (t != cavnum - 1)cout << ",";
 			}
-			cout << "6为跳过本回合操作，0为重置游戏)" << endl;
+			cout << "，6为跳过本回合操作，9为回到主菜单，0为重置游戏)" << endl;
 			cin >> whichob;
 			if (whichob == 2)
 			{
-				cout << "是否需要该骑兵转向?(0为不转向，1为转向):";
+				cout << "是否需要该骑兵转向?(0为不转向，1为转向，9为回到主菜单):";
 				cin >> deci;
-				board[cacoordinate[1][1]][cacoordinate[1][0]]->dirdecide(deci);
+				if (deci == 9)return;
+				for (;;)
+				{
+					if (deci != 0 && deci != 1)
+					{
+						cout << "错误的输入，请重新输入!" << endl;
+						continue;
+					}
+					board[cacoordinate[1][1]][cacoordinate[1][0]]->dirdecide(deci);
+					break;
+				}
 				cout << "请输入该骑兵前进的步数:";
 				cin >> num;
 				board[cacoordinate[1][1]][cacoordinate[1][0]]->walk(height, width, num, board);
 			}
 			else if (whichob == 3)
 			{
-				cout << "是否需要该骑兵转向?(0为不转向，1为转向):";
+				cout << "是否需要该骑兵转向?(0为不转向，1为转向，9为回到主菜单):";
 				cin >> deci;
+				if (deci == 9)return;
 				board[cacoordinate[2][1]][cacoordinate[2][0]]->dirdecide(deci);
 				cout << "请输入该骑兵前进的步数:";
 				cin >> num;
@@ -475,8 +494,9 @@ void chessboard::useroperate()
 			}
 			else if (whichob == 4)
 			{
-				cout << "是否需要该骑兵转向?(0为不转向，1为转向):";
+				cout << "是否需要该骑兵转向?(0为不转向，1为转向，9为回到主菜单):";
 				cin >> deci;
+				if (deci == 9)return;
 				board[cacoordinate[3][1]][cacoordinate[3][0]]->dirdecide(deci);
 				cout << "请输入该骑兵前进的步数:";
 				cin >> num;
@@ -484,8 +504,9 @@ void chessboard::useroperate()
 			}
 			else if (whichob == 5)
 			{
-				cout << "是否需要该骑兵转向?(0为不转向，1为转向):";
+				cout << "是否需要该骑兵转向?(0为不转向，1为转向，9为回到主菜单):";
 				cin >> deci;
+				if (deci == 9)return;
 				board[cacoordinate[4][1]][cacoordinate[4][0]]->dirdecide(deci);
 				cout << "请输入该骑兵前进的步数:";
 				cin >> num;
@@ -493,8 +514,9 @@ void chessboard::useroperate()
 			}
 			else if (whichob == 1)
 			{
-				cout << "是否需要该骑兵转向?(0为不转向，1为转向):";
+				cout << "是否需要该骑兵转向?(0为不转向，1为转向，9为回到主菜单):";
 				cin >> deci;
+				if (deci == 9)return;
 				board[cacoordinate[0][1]][cacoordinate[0][0]]->dirdecide(deci);
 				cout << "请输入该骑兵前进的步数:";
 				cin >> num;
@@ -505,6 +527,10 @@ void chessboard::useroperate()
 				reset();
 				i = 1;
 				continue;
+			}
+			else if (whichob == 9)
+			{
+				return;
 			}
 			i = 1;
 			movecounter++;
