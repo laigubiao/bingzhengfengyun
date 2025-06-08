@@ -4,30 +4,110 @@
 #include <ctime>
 #include <algorithm>
 using namespace std;
-vector<vector<chess*>>simple1 = 
+vector<vector<chess*>>ord1 = 
 { 
-	{nullptr,new infantry,nullptr,nullptr,nullptr},
-	{new infantry,nullptr,new cavalrty,nullptr,nullptr},
-	{nullptr,nullptr,nullptr,nullptr,nullptr} ,
-	{nullptr,nullptr,nullptr,new bowman,nullptr} ,
-	{nullptr,nullptr,new cavalrty,nullptr,nullptr}
+	{nullptr,new infantry(1),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,new cavalrty(1),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new bowman,nullptr,new infantry(4),nullptr,nullptr,nullptr} ,
+	{nullptr,nullptr,nullptr,new cavalrty(3),nullptr,nullptr,nullptr,nullptr} ,
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>ogoal1= 
+{
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{new cavalrty,new infantry,nullptr,new bowman,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,new cavalrty,new infantry,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>ogoal2 =
+{
+	{nullptr,nullptr,nullptr,new cavalrty,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new cavalrty,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new infantry,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new cavalrty,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,new infantry,new bowman,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,new bowman,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>ord2=
+{
+	{nullptr,nullptr,nullptr,nullptr,nullptr,new cavalrty(1),nullptr,nullptr},
+	{new cavalrty(4),new cavalrty(1),nullptr,nullptr,nullptr,new bowman(2),nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{new infantry(2),nullptr,new bowman(3),nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new infantry(2),nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>simple1=
+{
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,new infantry(1),nullptr,nullptr,nullptr},
+	{new infantry(4),new cavalrty(2),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new bowman(4),nullptr,nullptr,nullptr,nullptr,nullptr},
+	{new cavalrty(1),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
 };
 vector<vector<chess*>>goal1= 
 {
-	{nullptr,nullptr,nullptr,nullptr,nullptr},
-	{new infantry,new infantry,new cavalrty,nullptr,nullptr},
-	{nullptr,nullptr,nullptr,nullptr,nullptr} ,
-	{nullptr,nullptr,nullptr,new bowman,nullptr} ,
-	{nullptr,nullptr,new cavalrty,nullptr,nullptr} 
+	{new infantry,new cavalrty,nullptr,nullptr,new infantry,nullptr,nullptr,nullptr},
+	{new cavalrty,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new bowman,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
 };
-vector<vector<chess*>>simple2;
-vector<vector<chess*>>goal2;
-vector<vector<chess*>>ord1;
-vector<vector<chess*>>ogoal1;
-vector<vector<chess*>>ord2;
-vector<vector<chess*>>ogoal2;
-vector<vector<chess*>>hard1;
-vector<vector<chess*>>hgoal1;
+vector<vector<chess*>>simple2=
+{
+	{nullptr,new infantry(3),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new bowman(4),new cavalrty(4),nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,new infantry(2),nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,new infantry(3),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>goal2=
+{
+	{nullptr,nullptr,nullptr,new infantry,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,new cavalrty,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,new bowman,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,new infantry,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,new infantry,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>hard1=
+{
+	{new cavalrty(1),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,new infantry(1),nullptr,nullptr,new cavalrty(2)},
+	{new cavalrty(4),nullptr,new infantry(2),nullptr,nullptr,new bowman(2),nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new bowman(1),nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{new infantry(3),nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
+vector<vector<chess*>>hgoal1=
+{
+	{new infantry,nullptr,new cavalrty,nullptr,nullptr,nullptr,nullptr,new cavalrty},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new infantry,nullptr,new bowman,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,new bowman,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,new infantry,nullptr,new cavalrty,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr},
+	{nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr,nullptr}
+};
 static const string customizedfile[5] = { "customized1.txt","customized2.txt","customized3.txt","customized4.txt" ,"customized5.txt" };
 static const string wincondition[5] = { "wincondition1.txt","wincondition2.txt" ,"wincondition3.txt" ,"wincondition4.txt" ,"wincondition5.txt" };
 ifstream ifs[5];
@@ -484,7 +564,7 @@ void user::playgame()
 			}
 			case 2:
 			{
-				chessboard s2(simple2, goal2);
+				chessboard s2(7,7,simple2, goal2,3,1,1);
 				game(s2);
 				break;
 			}
@@ -515,7 +595,7 @@ void user::playgame()
 			}
 			case 2:
 			{
-				chessboard o2(ord2, ogoal2);
+				chessboard o2(6,6,ord2, ogoal2,2,2,3);
 				game(o2);
 				break;
 			}
@@ -539,7 +619,7 @@ void user::playgame()
 				break;
 			case 1:
 			{
-				chessboard h1(hard1, hgoal1);
+				chessboard h1(8,8,hard1, hgoal1,3,2,3);
 				game(h1);
 				break;
 			}
