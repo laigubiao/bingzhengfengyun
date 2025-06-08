@@ -85,11 +85,13 @@ void chess::bowspin()
 	}
 	return;
 }
+infantry::infantry(int given):chess(given){}
 void infantry::walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board)
 {
+	if (i == 0)return;
 	int newx = x;
 	int newy = y;
-	for (int t = 1; t <= i; t++)
+	for (int t = 1; t <= i; t+=1)
 	{
 		if (newx > w || newy > h||newx<0||newy<0)
 		{
@@ -117,40 +119,65 @@ void infantry::walk(const int& h, const int& w, const int& i, std::vector<std::v
 			switch (heading)
 			{
 			case(1):
-				newy = newy - 1;
+				board[newy-1][newx] = new infantry(newx,newy-1,board[y][x]->getdir());
+				board[newy-1][newx]->setx(newx);
+				board[newy-1][newx]->sety(newy-1);
+				if (t!=1)
+				{
+					board[y][x] = nullptr;
+				}
 				break;
 			case(2):
-				newx = newx + 1;
+				board[newy][newx+1] = new infantry(newx+1, newy, board[y][x]->getdir());
+				board[newy][newx+1]->setx(newx+1);
+				board[newy][newx+1]->sety(newy);
+				if (t!=1)
+				{
+					board[y][x] = nullptr;
+				}
 				break;
 			case(3):
-				newy = newy + 1;
+				board[newy+1][newx] = new infantry(newx, newy + 1, board[y][x]->getdir());
+				board[newy+1][newx]->setx(newx);
+				board[newy+1][newx]->sety(newy+1);
+				if (t!=1)
+				{
+					board[y][x] = nullptr;
+				}
 				break;
 			case(4):
-				newx = newx - 1;
+				board[newy][newx-1] = new infantry(newx-1, newy, board[y][x]->getdir());
+				board[newy][newx-1]->setx(newx-1);
+				board[newy][newx-1]->sety(newy);
+				if (t!=1)
+				{
+					board[y][x] = nullptr;
+				}
 				break;
 			}
-			break;
+			return;
 		}
 	}
-	board[newy][newx] = board[y][x];
+	board[newy][newx] = new infantry(newx, newy, board[y][x]->getdir());
+	board[newy][newx]->setx(newx);
+	board[newy][newx]->sety(newy);
 	board[y][x] = nullptr;
-	y = newy;
-	x = newx;
 	return;
 }
+bowman::bowman(int given) :chess(given) {}
 void bowman::shoot(const int& h, const int& w, const int& option, std::vector<std::vector<chess*>>& board)
 {
+	if (option != 4 && option != 1 && option != 2 && option != 3)
+	{
+		std::cout << "请勿输入错误方向" << std::endl;
+		return;
+	}
 	heading = option;
 	int newx = x;
 	int newy = y;
 	for (; newx <=w && newy <= h;)
 	{
-		if (newx > w || newy > h || newx < 0 || newy < 0)
-		{
-			std::cout << "wrong operation,please reoperate" << std::endl;
-			return;
-		}
-		switch (heading)
+		switch (option)
 		{
 		case (1):
 			newy = newy + 1;
@@ -167,7 +194,7 @@ void bowman::shoot(const int& h, const int& w, const int& option, std::vector<st
 		}
 		if (board[newy][newx] != nullptr)
 		{
-			switch (heading)
+			switch (option)
 			{
 			case (1):
 				if (board[newy][newx-1] == nullptr)
@@ -258,13 +285,15 @@ void bowman::shoot(const int& h, const int& w, const int& option, std::vector<st
 				}
 				break;
 			}
+			break;
 		}
-		return;
 	}
 	return;
 }
+cavalrty::cavalrty(int given) :chess(given) {}
 void cavalrty::walk(const int& h, const int& w, const int& i, std::vector<std::vector<chess*>>& board)
 {
+	if (i == 0)return;
 	int newx = x;
 	int newy = y;
 	for (int t = 1; t <= i; t++)
